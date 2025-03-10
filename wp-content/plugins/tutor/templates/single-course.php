@@ -42,6 +42,8 @@ if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(27, 182, 180, 0.1);
         transition: all 0.4s ease;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .tutor-course-details-header:hover {
@@ -54,6 +56,27 @@ if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course
         margin-bottom: 1rem;
         font-weight: 700 !important;
         line-height: 1.2;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .tutor-course-details-header {
+            padding: 1.5rem;
+        }
+        
+        .tutor-course-details-title {
+            font-size: 2rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .tutor-course-details-header {
+            padding: 1rem;
+        }
+        
+        .tutor-course-details-title {
+            font-size: 1.75rem !important;
+        }
     }
     
     /* Button Animation */
@@ -133,8 +156,6 @@ if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course
     }
 
     /* Enhanced Course Content Section */
-   
-
     .tutor-course-content-list {
         list-style: none;
         padding: 0;
