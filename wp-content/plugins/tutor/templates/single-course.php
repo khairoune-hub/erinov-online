@@ -1,107 +1,92 @@
-<?php
-/**
- * Template for displaying single course
- *
- * @package Tutor\Templates
- * @author Themeum <support@themeum.com>
- * @link https://themeum.com
- * @since 1.0.0
- */
-
-$course_id     = get_the_ID();
-$course_rating = tutor_utils()->get_course_rating( $course_id );
-$is_enrolled   = tutor_utils()->is_enrolled( $course_id, get_current_user_id() );
-
-// Prepare the nav items.
-$course_nav_item = apply_filters( 'tutor_course/single/nav_items', tutor_utils()->course_nav_items(), $course_id );
-$is_public       = \TUTOR\Course_List::is_public( $course_id );
-$is_mobile       = wp_is_mobile();
-
-$enrollment_box_position = tutor_utils()->get_option( 'enrollment_box_position_in_mobile', 'bottom' );
-if ( '-1' === $enrollment_box_position ) {
-	$enrollment_box_position = 'bottom';
-}
-$student_must_login_to_view_course = tutor_utils()->get_option( 'student_must_login_to_view_course' );
-
-tutor_utils()->tutor_custom_header();
-
-if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course ) {
-	tutor_load_template( 'login' );
-	tutor_utils()->tutor_custom_footer();
-	return;
-}
-$has_video = apply_filters( 'tutor_course_has_video', tutor_utils()->has_video_in_single(), $course_id );
-?>
-
-<?php do_action( 'tutor_course/single/before/wrap' ); ?>
-<div <?php tutor_post_class( 'tutor-full-width-course-top tutor-course-top-info tutor-page-wrap tutor-wrap-parent' ); ?>>
-	<div class="tutor-course-details-page tutor-container">
-		<?php ( isset( $is_enrolled ) && $is_enrolled ) ? tutor_course_enrolled_lead_info() : tutor_course_lead_info(); ?>
-		<div class="tutor-row tutor-gx-xl-5">
-			<main class="tutor-col-xl-8">
-				<?php $has_video ? tutor_course_video() : get_tutor_course_thumbnail(); ?>
-				<?php do_action( 'tutor_course/single/before/inner-wrap' ); ?>
-
-				<?php if ( $is_mobile && 'top' === $enrollment_box_position ) : ?>
-					<div class="tutor-mt-32">
-						<?php tutor_load_template( 'single.course.course-entry-box' ); ?>
-					</div>
-				<?php endif; ?>
-
-				<div class="tutor-course-details-tab tutor-mt-32">
-					<?php if ( is_array( $course_nav_item ) && count( $course_nav_item ) > 1 ) : ?>
-						<div class="tutor-is-sticky">
-							<?php tutor_load_template( 'single.course.enrolled.nav', array( 'course_nav_item' => $course_nav_item ) ); ?>
-						</div>
-					<?php endif; ?>
-					<div class="tutor-tab tutor-pt-24">
-						<?php foreach ( $course_nav_item as $key => $subpage ) : ?>
-							<div id="tutor-course-details-tab-<?php echo esc_attr( $key ); ?>" class="tutor-tab-item<?php echo 'info' == $key ? ' is-active' : ''; ?>">
-								<?php
-									do_action( 'tutor_course/single/tab/' . $key . '/before' );
-
-									$method = $subpage['method'];
-								if ( is_string( $method ) ) {
-									$method();
-								} else {
-									$_object = $method[0];
-									$_method = $method[1];
-									$_object->$_method( get_the_ID() );
-								}
-
-									do_action( 'tutor_course/single/tab/' . $key . '/after' );
-								?>
-							</div>
-						<?php endforeach; ?>
-					</div>
-				</div>
-				<?php do_action( 'tutor_course/single/after/inner-wrap' ); ?>
-			</main>
-
-			<aside class="tutor-col-xl-4">
-				<?php $sidebar_attr = apply_filters( 'tutor_course_details_sidebar_attr', '' ); ?>
-				<div class="tutor-single-course-sidebar tutor-mt-40 tutor-mt-xl-0" <?php echo esc_attr( $sidebar_attr ); ?> >
-					<?php do_action( 'tutor_course/single/before/sidebar' ); ?>
-
-					<?php if ( ( $is_mobile && 'bottom' === $enrollment_box_position ) || ! $is_mobile ) : ?>
-						<?php tutor_load_template( 'single.course.course-entry-box' ); ?>
-					<?php endif ?>
-
-					<div class="tutor-single-course-sidebar-more tutor-mt-24">
-						<?php tutor_course_instructors_html(); ?>
-						<?php tutor_course_requirements_html(); ?>
-						<?php tutor_course_tags_html(); ?>
-						<?php tutor_course_target_audience_html(); ?>
-					</div>
-
-					<?php do_action( 'tutor_course/single/after/sidebar' ); ?>
-				</div>
-			</aside>
+<header class="tutor-course-details-header tutor-mb-44" style="background: linear-gradient(to right, rgba(27, 182, 180, 0.1), rgba(27, 182, 180, 0.05)); padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(27, 182, 180, 0.1); transition: all 0.4s ease;">
+	<div class="tutor-course-details-ratings tutor-animate-fade-in">
+		<div class="tutor-ratings tutor-ratings-">
+			<div class="tutor-ratings-stars">
+				<span class="tutor-icon-star-line"></span>
+				<span class="tutor-icon-star-line"></span>
+				<span class="tutor-icon-star-line"></span>
+				<span class="tutor-icon-star-line"></span>
+				<span class="tutor-icon-star-line"></span>
+			</div>
 		</div>
 	</div>
-</div>
+	
+	<h1 class="tutor-course-details-title tutor-fw-bold tutor-color-black tutor-mt-12 tutor-mb-0 tutor-animate-fade-in" style="font-size: 2.5rem !important; color: #1BB6B4 !important; line-height: 1.2; animation-delay: 0.2s;">
+		<span>تركيب هيكل الذراع الآلي</span>
+	</h1>
 
-<?php do_action( 'tutor_course/single/after/wrap' ); ?>
+	<div class="tutor-course-details-top tutor-mt-16 tutor-animate-fade-in" style="animation-delay: 0.3s;">
+		<div class="tutor-row">
+			<div class="tutor-col">
+				<div class="tutor-meta tutor-course-details-info"> 
+					<div>
+						التصنيفات :
+						<a href="http://localhost/course-category/electronics-robotics/?tutor-course-filter-category=7" style="color: #1BB6B4; font-weight: 500; transition: all 0.3s ease;">Electronics &amp; Robotics</a>
+					</div>
+				</div>
+			</div>
 
-<?php
-tutor_utils()->tutor_custom_footer();
+			<div class="tutor-col-auto">
+				<div class="tutor-course-details-actions tutor-mt-12 tutor-mt-sm-0">
+					<a href="#" class="tutor-btn tutor-btn-ghost tutor-course-wishlist-btn tutor-mr-16 tutor-animate-fade-in" data-course-id="538" style="animation-delay: 0.4s; transition: all 0.3s ease; position: relative; overflow: hidden;">
+						<i class="tutor-icon-bookmark-line tutor-mr-8"></i> قائمتي المفضلة
+					</a>
+
+					<a data-tutor-modal-target="tutor-course-share-opener" href="#" class="tutor-btn tutor-btn-ghost tutor-course-share-btn tutor-animate-fade-in" style="animation-delay: 0.5s; transition: all 0.3s ease; position: relative; overflow: hidden;">
+						<span class="tutor-icon-share tutor-mr-8"></span> مشاركة
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
+<style>
+/* Button Animation */
+.tutor-btn {
+    transition: all 0.3s ease !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.tutor-btn:hover {
+    background-color: #1BB6B4 !important;
+    transform: translateY(-3px);
+    color: white !important;
+}
+
+.tutor-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.5s ease;
+}
+
+.tutor-btn:hover::after {
+    left: 100%;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tutor-animate-fade-in {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+/* Enhanced header hover effect */
+.tutor-course-details-header:hover {
+    box-shadow: 0 6px 20px rgba(27, 182, 180, 0.15);
+}
+
+/* Star rating color */
+.tutor-icon-star-line {
+    color: #1BB6B4;
+}
+</style>
