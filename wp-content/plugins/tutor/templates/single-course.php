@@ -30,8 +30,107 @@ if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course
 	tutor_utils()->tutor_custom_footer();
 	return;
 }
-$has_video = apply_filters( 'tutor_course_has_video', tutor_utils()->has_video_in_single(), $course_id );
 ?>
+
+<!-- Add custom CSS for styling and animations -->
+<style>
+    /* Enhanced Course Header */
+    .tutor-course-details-header {
+        background: linear-gradient(to right, rgba(27, 182, 180, 0.1), rgba(27, 182, 180, 0.05));
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(27, 182, 180, 0.1);
+        transition: all 0.4s ease;
+    }
+    
+    .tutor-course-details-header:hover {
+        box-shadow: 0 6px 20px rgba(27, 182, 180, 0.15);
+    }
+    
+    .tutor-course-details-title {
+        font-size: 2.5rem !important;
+        color: #1BB6B4 !important;
+        margin-bottom: 1rem;
+        font-weight: 700 !important;
+        line-height: 1.2;
+    }
+    
+    /* Button Animation */
+    .tutor-btn {
+        transition: all 0.3s ease !important;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .tutor-btn:hover {
+        background-color: #1BB6B4 !important;
+        transform: translateY(-3px);
+        color: white !important;
+    }
+    
+    .tutor-btn::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.5s ease;
+    }
+    
+    .tutor-btn:hover::after {
+        left: 100%;
+    }
+    
+    /* Course tab links */
+    .tutor-nav-link {
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .tutor-nav-link.is-active, 
+    .tutor-nav-link:hover {
+        color: #1BB6B4 !important;
+        border-bottom-color: #1BB6B4;
+    }
+    
+    /* Course entry box */
+    .tutor-course-sidebar-card {
+        border-top: 3px solid #1BB6B4;
+        transition: all 0.4s ease;
+    }
+    
+    .tutor-course-sidebar-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    /* Category links styling */
+    .tutor-course-details-info a {
+        color: #1BB6B4;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .tutor-course-details-info a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Star rating color */
+    .tutor-icon-star-line {
+        color: #1BB6B4;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .tutor-animate-fade-in {
+        animation: fadeIn 0.6s ease forwards;
+    }
+</style>
 
 <?php do_action( 'tutor_course/single/before/wrap' ); ?>
 <div <?php tutor_post_class( 'tutor-full-width-course-top tutor-course-top-info tutor-page-wrap tutor-wrap-parent' ); ?>>
@@ -39,7 +138,7 @@ $has_video = apply_filters( 'tutor_course_has_video', tutor_utils()->has_video_i
 		<?php ( isset( $is_enrolled ) && $is_enrolled ) ? tutor_course_enrolled_lead_info() : tutor_course_lead_info(); ?>
 		<div class="tutor-row tutor-gx-xl-5">
 			<main class="tutor-col-xl-8">
-				<?php $has_video ? tutor_course_video() : get_tutor_course_thumbnail(); ?>
+				<?php tutor_utils()->has_video_in_single() ? tutor_course_video() : get_tutor_course_thumbnail(); ?>
 				<?php do_action( 'tutor_course/single/before/inner-wrap' ); ?>
 
 				<?php if ( $is_mobile && 'top' === $enrollment_box_position ) : ?>
@@ -100,6 +199,65 @@ $has_video = apply_filters( 'tutor_course_has_video', tutor_utils()->has_video_i
 		</div>
 	</div>
 </div>
+
+<script>
+// Add animation classes to buttons and elements
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation classes to header elements
+    const courseHeader = document.querySelector('.tutor-course-details-header');
+    if (courseHeader) {
+        courseHeader.classList.add('tutor-animate-fade-in');
+    }
+    
+    const courseTitle = document.querySelector('.tutor-course-details-title');
+    if (courseTitle) {
+        courseTitle.classList.add('tutor-animate-fade-in');
+        courseTitle.style.animationDelay = '0.2s';
+    }
+    
+    // Apply animation to all buttons
+    const buttons = document.querySelectorAll('.tutor-btn');
+    buttons.forEach(function(button, index) {
+        button.classList.add('tutor-animate-fade-in');
+        button.style.animationDelay = (0.3 + (index * 0.1)) + 's';
+    });
+    
+    // Apply primary color to all primary buttons
+    const primaryButtons = document.querySelectorAll('.tutor-btn-primary');
+    primaryButtons.forEach(function(button) {
+        button.style.backgroundColor = '#1BB6B4';
+        button.style.borderColor = '#1BB6B4';
+    });
+    
+    // Apply color to all outline buttons
+    const outlineButtons = document.querySelectorAll('.tutor-btn-outline-primary');
+    outlineButtons.forEach(function(button) {
+        button.style.borderColor = '#1BB6B4';
+        button.style.color = '#1BB6B4';
+    });
+    
+    // Animate course sidebar card
+    const sidebarCard = document.querySelector('.tutor-course-sidebar-card');
+    if (sidebarCard) {
+        sidebarCard.classList.add('tutor-animate-fade-in');
+        sidebarCard.style.animationDelay = '0.4s';
+    }
+    
+    // Animate ratings section
+    const ratingsSection = document.querySelector('.tutor-course-details-ratings');
+    if (ratingsSection) {
+        ratingsSection.classList.add('tutor-animate-fade-in');
+        ratingsSection.style.animationDelay = '0.1s';
+    }
+    
+    // Animate course details top section
+    const courseDetailsTop = document.querySelector('.tutor-course-details-top');
+    if (courseDetailsTop) {
+        courseDetailsTop.classList.add('tutor-animate-fade-in');
+        courseDetailsTop.style.animationDelay = '0.3s';
+    }
+});
+</script>
 
 <?php do_action( 'tutor_course/single/after/wrap' ); ?>
 
