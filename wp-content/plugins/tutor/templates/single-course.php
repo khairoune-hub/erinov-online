@@ -1,3 +1,5 @@
+no here is what u gave me continue 
+
 <?php
 /**
  * Template for displaying single course
@@ -130,6 +132,112 @@ if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course
     .tutor-animate-fade-in {
         animation: fadeIn 0.6s ease forwards;
     }
+
+    /* Enhanced Course Content Section */
+    .tutor-accordion-item {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .tutor-accordion-item:hover {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .tutor-accordion-item-header {
+        background-color: #1BB6B4;
+        color: white;
+        padding: 1rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.3s ease;
+    }
+
+    .tutor-accordion-item-header.is-active {
+        background-color: #159a98;
+    }
+
+    .tutor-accordion-item-header::after {
+        content: '\25BC';
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+    }
+
+    .tutor-accordion-item-header.is-active::after {
+        transform: rotate(180deg);
+    }
+
+    .tutor-accordion-item-body {
+        background-color: #f9f9f9;
+        padding: 1rem;
+        border-top: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+    .tutor-accordion-item-body-content {
+        padding: 0.5rem;
+    }
+
+    .tutor-course-content-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .tutor-course-content-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        transition: background-color 0.3s ease;
+    }
+
+    .tutor-course-content-list-item:last-child {
+        border-bottom: none;
+    }
+
+    .tutor-course-content-list-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    .tutor-course-content-list-item-icon {
+        font-size: 1.2rem;
+        color: #1BB6B4;
+    }
+
+    .tutor-course-content-list-item-title {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #333;
+        margin: 0;
+    }
+
+    .tutor-course-content-list-item-title a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .tutor-course-content-list-item-title a:hover {
+        color: #1BB6B4;
+    }
+
+    .tutor-course-content-list-item-duration {
+        font-size: 0.875rem;
+        color: #666;
+    }
+
+    .tutor-course-content-list-item-status {
+        font-size: 1rem;
+        color: #666;
+    }
 </style>
 
 <?php do_action( 'tutor_course/single/before/wrap' ); ?>
@@ -143,7 +251,7 @@ if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course
 
 				<?php if ( $is_mobile && 'top' === $enrollment_box_position ) : ?>
 					<div class="tutor-mt-32">
-						<?php tutor_load_template( 'single.course.course-entry-box' ); ?>
+								<?php tutor_load_template( 'single.course.course-entry-box' ); ?>
 					</div>
 				<?php endif; ?>
 
@@ -255,6 +363,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (courseDetailsTop) {
         courseDetailsTop.classList.add('tutor-animate-fade-in');
         courseDetailsTop.style.animationDelay = '0.3s';
+    }
+
+    // Remove the share button from the header
+    const shareButton = document.querySelector('.tutor-course-share-btn');
+    if (shareButton) {
+        shareButton.remove();
     }
 });
 </script>
