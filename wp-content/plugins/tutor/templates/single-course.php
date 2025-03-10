@@ -133,55 +133,7 @@ if ( ! is_user_logged_in() && ! $is_public && $student_must_login_to_view_course
     }
 
     /* Enhanced Course Content Section */
-    .tutor-accordion-item {
-        margin-bottom: 1rem;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .tutor-accordion-item:hover {
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    .tutor-accordion-item-header {
-        background-color: #1BB6B4;
-        color: white;
-        padding: 1rem;
-        font-size: 1.25rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: background-color 0.3s ease;
-    }
-
-    .tutor-accordion-item-header.is-active {
-        background-color: #159a98;
-    }
-
-    .tutor-accordion-item-header::after {
-        content: '\25BC';
-        font-size: 0.8rem;
-        transition: transform 0.3s ease;
-    }
-
-    .tutor-accordion-item-header.is-active::after {
-        transform: rotate(180deg);
-    }
-
-    .tutor-accordion-item-body {
-        background-color: #f9f9f9;
-        padding: 1rem;
-        border-top: 1px solid #e0e0e0;
-        transition: all 0.3s ease;
-    }
-
-    .tutor-accordion-item-body-content {
-        padding: 0.5rem;
-    }
+   
 
     .tutor-course-content-list {
         list-style: none;
