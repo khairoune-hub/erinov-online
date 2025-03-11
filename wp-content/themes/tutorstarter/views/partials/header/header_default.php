@@ -112,7 +112,7 @@ html body * {
         text-align: right;
         position: absolute;
         right: 0;
-        min-width: 200px;
+        min-width: 130px;
         border-radius: 4px;
         box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
         background-color: white;
