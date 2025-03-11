@@ -164,6 +164,28 @@ html body * {
 
 /* تصميم متجاوب للهيدر */
 @media (max-width: 1200px) {
+	    .tutor-header-profile-menu-items {
+        margin-left:30px !important;
+        font-size: large;
+
+    }
+
+    /* Hide all profile-related elements */
+    .tutor-header-profile-photo,
+    .tutor-header-submenu,
+    .tutor-header-profile-menu-items,
+    .tutor-avatar,
+    .tutor-avatar-text,
+    .tutor-dashboard-menu-item-icon {
+        display: none !important;
+    }
+    
+    /* Hide any SVG icons related to profile dropdown */
+    .tutor-header-profile-menu-items svg,
+    .tutor-avatar svg {
+        display: none !important;
+    }
+}
     .navbar-brand img {
         max-height: 60px !important; /* تصغير الشعار قليلاً */
     }
@@ -179,6 +201,28 @@ html body * {
 }
 
 @media (max-width: 992px) {
+	    .tutor-header-profile-menu-items {
+        margin-left:30px !important;
+        font-size: large;
+
+    }
+
+    /* Hide all profile-related elements */
+    .tutor-header-profile-photo,
+    .tutor-header-submenu,
+    .tutor-header-profile-menu-items,
+    .tutor-avatar,
+    .tutor-avatar-text,
+    .tutor-dashboard-menu-item-icon {
+        display: none !important;
+    }
+    
+    /* Hide any SVG icons related to profile dropdown */
+    .tutor-header-profile-menu-items svg,
+    .tutor-avatar svg {
+        display: none !important;
+    }
+}
     .header-default {
         padding: 8px 0;
     }
@@ -276,6 +320,28 @@ html body * {
         max-width: 200px;
         font-size: 13px;
     }
+	    .tutor-header-profile-menu-items {
+        margin-left:30px !important;
+        font-size: large;
+
+    }
+
+    /* Hide all profile-related elements */
+    .tutor-header-profile-photo,
+    .tutor-header-submenu,
+    .tutor-header-profile-menu-items,
+    .tutor-avatar,
+    .tutor-avatar-text,
+    .tutor-dashboard-menu-item-icon {
+        display: none !important;
+    }
+    
+    /* Hide any SVG icons related to profile dropdown */
+    .tutor-header-profile-menu-items svg,
+    .tutor-avatar svg {
+        display: none !important;
+    }
+}
 }
 </style>
 
