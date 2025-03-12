@@ -14,6 +14,9 @@ $lost_pass = apply_filters( 'tutor_lostpassword_url', wp_lostpassword_url() );
 $is_rtl = is_user_logged_in() ? 'rtl' : 'ltr';
 $lang = is_user_logged_in() ? 'ar' : get_locale();
 
+// Arabic page title
+$page_title = 'صفحة تسجيل الدخول';
+
 // Custom colors
 $primary_color = '#f6931e';
 $secondary_color = '#00aeac';
@@ -50,17 +53,40 @@ $custom_css = "
     }
     .password-toggle {
         position: absolute;
-        right: " . ($is_rtl === 'rtl' ? 'auto' : '10px') . ";
-        left: " . ($is_rtl === 'rtl' ? '10px' : 'auto') . ";
         top: 50%;
         transform: translateY(-50%);
         cursor: pointer;
         color: #6c757d;
+        z-index: 2;
     }
-    .rtl .password-toggle {
-        right: 10px;
+    
+    /* Fix for eye icon alignment */
+    .tutor-form-control {
+        padding-right: 40px;
+    }
+    
+    [dir='rtl'] .tutor-form-control {
+        padding-right: 16px;
+        padding-left: 40px;
+    }
+    
+    [dir='ltr'] .password-toggle {
+        right: 16px;
         left: auto;
     }
+    
+    [dir='rtl'] .password-toggle {
+        left: 16px;
+        right: auto;
+    }
+    
+    .page-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
     .password-strength-text {
         font-size: 12px;
         margin-top: 5px;
@@ -90,6 +116,7 @@ $translations = array(
     'medium' => $lang === 'ar' ? 'متوسطة' : 'Medium',
     'good' => $lang === 'ar' ? 'جيدة' : 'Good',
     'strong' => $lang === 'ar' ? 'قوية' : 'Strong',
+    'page_title' => $lang === 'ar' ? $page_title : 'Login Page',
 );
 ?>
 <style>
@@ -127,6 +154,12 @@ foreach ( $login_errors as $login_error ) {
 
 do_action( 'tutor_before_login_form' );
 ?>
+
+<!-- Arabic Page Title -->
+<div class="page-title">
+    <?php echo esc_html($translations['page_title']); ?>
+</div>
+
 <form id="tutor-login-form" method="post" dir="<?php echo esc_attr($is_rtl); ?>" lang="<?php echo esc_attr($lang); ?>">
     <?php if ( is_single_course() ) : ?>
         <input type="hidden" name="tutor_course_enroll_attempt" value="<?php echo esc_attr( get_the_ID() ); ?>">
