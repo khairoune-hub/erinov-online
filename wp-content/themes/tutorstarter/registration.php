@@ -18,6 +18,7 @@ get_header();
             // Validate and sanitize inputs
             $user_login = sanitize_user( $_POST['user_login'] );
             $user_email = sanitize_email( $_POST['user_email'] );
+            $user_phone = sanitize_text_field( $_POST['user_phone'] );
             $user_pass = $_POST['user_pass'];
             $pass_confirm = $_POST['pass_confirm'];
             
@@ -30,6 +31,10 @@ get_header();
             
             if ( empty( $user_email ) ) {
                 $errors[] = 'البريد الإلكتروني مطلوب';
+            }
+            
+            if ( empty( $user_phone ) ) {
+                $errors[] = 'رقم الجوال مطلوب';
             }
             
             if ( empty( $user_pass ) ) {
@@ -51,6 +56,9 @@ get_header();
                     // Set user role to student
                     $user = new WP_User( $user_id );
                     $user->set_role( 'tutor_student' );
+                    
+                    // Save phone as user meta
+                    update_user_meta( $user_id, 'phone', $user_phone );
                     
                     // Auto log in the user
                     wp_set_current_user( $user_id );
@@ -79,6 +87,11 @@ get_header();
             <div class="form-group">
                 <label for="user_email">البريد الإلكتروني <span class="required">*</span></label>
                 <input type="email" name="user_email" id="user_email" value="<?php echo isset( $_POST['user_email'] ) ? esc_attr( $_POST['user_email'] ) : ''; ?>" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="user_phone">رقم الجوال <span class="required">*</span></label>
+                <input type="tel" name="user_phone" id="user_phone" value="<?php echo isset( $_POST['user_phone'] ) ? esc_attr( $_POST['user_phone'] ) : ''; ?>" required />
             </div>
             
             <div class="form-group password-container">
@@ -170,6 +183,7 @@ get_header();
     
     .custom-registration-container input[type="text"],
     .custom-registration-container input[type="email"],
+    .custom-registration-container input[type="tel"],
     .custom-registration-container input[type="password"] {
         width: 100%;
         padding: 12px;
@@ -181,6 +195,7 @@ get_header();
     
     .custom-registration-container input[type="text"]:focus,
     .custom-registration-container input[type="email"]:focus,
+    .custom-registration-container input[type="tel"]:focus,
     .custom-registration-container input[type="password"]:focus {
         border-color: #00aeac;
         outline: none;
@@ -218,7 +233,7 @@ get_header();
     
     .toggle-password {
         position: absolute;
-        right: 10px;
+        left: 10px; /* Changed from right to left for RTL */
         top: 50%;
         transform: translateY(-50%);
         cursor: pointer;
