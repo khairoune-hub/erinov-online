@@ -23,7 +23,7 @@
 define( 'DB_NAME', 'wcanvcvwdr' );
 define( 'DB_USER', 'root' );
 define( 'DB_PASSWORD', '' );
-define( 'DB_HOST', 'localhost' );
+define( 'DB_HOST', 'online.erinov.com' );
 
 /** Database charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8mb4' );
@@ -90,5 +90,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once ABSPATH . 'wp-settings.php';
 
 
-define('WP_HOME', 'http://localhost/');
-define('WP_SITEURL', 'http://localhost/');
+define('WP_HOME', 'https://online.erinov.com/');
+define('WP_SITEURL', 'https://online.erinov.com/');

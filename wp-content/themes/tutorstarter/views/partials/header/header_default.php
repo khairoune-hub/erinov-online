@@ -313,7 +313,8 @@ html body * {
 		?>
 		<div class="navbar-utils">
 			<?php
-			if ( class_exists( 'WooCommerce' ) && defined('TUTOR_VERSION') && 'wc' === tutor_utils()->get_option( 'monetize_by' ) && 'header_fullwidth_center' !== get_theme_mod( 'header_type_select' ) ) {
+			// WooCommerce cart - only show if user is logged in
+			if ( class_exists( 'WooCommerce' ) && defined('TUTOR_VERSION') && 'wc' === tutor_utils()->get_option( 'monetize_by' ) && 'header_fullwidth_center' !== get_theme_mod( 'header_type_select' ) && is_user_logged_in() ) {
 				global $woocommerce;
 				$items = $woocommerce->cart->get_cart();
 				if ( true === get_theme_mod( 'cart_btn_toggle', true ) ) {
@@ -327,21 +328,23 @@ html body * {
 						echo tutor_starter_header_cart();
 					}
 				}
-				if ( defined( 'TDC_VERSION' ) && ! is_user_logged_in() ) {
-					?>
-					<div class="tutor-landing-explore">
-						<span><?php esc_html_e( 'هل تريد استكشاف!', 'tutorstarter' ); ?></span>
-						<a class="tutor-version-new-btn"
-							href="<?php echo esc_url( home_url() . '/login' ); ?>"><?php esc_html_e( 'تسجيل الدخول السريع', 'tutorstarter' ); ?></a>
-					</div>
-				<?php } ?>
+			}
+			
+			// Show login link for non-logged in users
+			if ( defined( 'TDC_VERSION' ) && ! is_user_logged_in() ) {
+				?>
+				<div class="tutor-landing-explore">
+					<span><?php esc_html_e( 'هل تريد استكشاف!', 'tutorstarter' ); ?></span>
+					<a class="tutor-version-new-btn"
+						href="<?php echo esc_url( home_url() . '/login' ); ?>"><?php esc_html_e( 'تسجيل الدخول السريع', 'tutorstarter' ); ?></a>
+				</div>
 			<?php } ?>
 
 			<?php
-			if ( defined('TUTOR_VERSION') && class_exists( 'Tutor\Ecommerce\CartController' ) && 'tutor' == tutor_utils()->get_option( 'monetize_by' ) && 'header_fullwidth_center' !== get_theme_mod( 'header_type_select' ) ) {
+			// Tutor LMS native cart - only show if user is logged in
+			if ( defined('TUTOR_VERSION') && class_exists( 'Tutor\Ecommerce\CartController' ) && 'tutor' == tutor_utils()->get_option( 'monetize_by' ) && 'header_fullwidth_center' !== get_theme_mod( 'header_type_select' ) && is_user_logged_in() ) {
 				$tutor_native_cart_controller = new CartController();
-				?>
-				<?php
+				
 				if ( true === get_theme_mod( 'cart_btn_toggle', true ) ) {
 					$items = $tutor_native_cart_controller->get_cart_items()['courses'];
 					if ( $items ) {
@@ -358,16 +361,9 @@ html body * {
 						<?php
 					}
 				}
-				if ( defined( 'TDC_VERSION' ) && ! is_user_logged_in() ) {
-					?>
-					<div class="tutor-landing-explore">
-						<span><?php esc_html_e( 'هل تريد استكشاف!', 'tutorstarter' ); ?></span>
-						<a class="tutor-version-new-btn"
-							href="<?php echo esc_url( home_url() . '/login' ); ?>"><?php esc_html_e( 'تسجيل الدخول السريع', 'tutorstarter' ); ?></a>
-					</div>
-					<?php
-				}
 			}
+			
+			// CTA button for non-logged in users
 			if ( ! is_user_logged_in() || is_customize_preview() ) {
 				?>
 				<?php if ( true === get_theme_mod( 'cta_text_toggle', true ) ) { ?>
@@ -378,6 +374,8 @@ html body * {
 					<?php
 				}
 			}
+			
+			// Profile menu for logged in users
 			if ( is_user_logged_in() ) {
 				if ( class_exists( '\TUTOR\Utils' ) && is_user_logged_in() ) {
 					?>
