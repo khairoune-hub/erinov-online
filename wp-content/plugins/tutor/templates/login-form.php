@@ -1,248 +1,296 @@
 <?php
 /**
- * Template Name: Custom Tutor Login Arabic
+ * Tutor login form template - Customized with Arabic support and enhanced features
+ *
+ * @package Tutor\Templates
+ * @author Themeum <support@themeum.com>
+ * @link https://themeum.com
+ * @since 2.0.1
  */
-get_header();
-?>
 
-<div class="custom-login-container">
-    <h2>تسجيل الدخول</h2>
-    
-    <?php
-    // Check if form is submitted
-    if ( isset( $_POST['login_submit'] ) ) {
-        
-        // Validate and sanitize inputs
-        $user_login = sanitize_user( $_POST['user_login'] );
-        $user_pass = $_POST['user_pass'];
-        $remember = isset( $_POST['remember'] ) ? true : false;
-        
-        // Form validation
-        $errors = array();
-        
-        if ( empty( $user_login ) ) {
-            $errors[] = 'اسم المستخدم أو البريد الإلكتروني مطلوب';
-        }
-        
-        if ( empty( $user_pass ) ) {
-            $errors[] = 'كلمة المرور مطلوبة';
-        }
-        
-        // If no errors, attempt login
-        if ( empty( $errors ) ) {
-            $creds = array(
-                'user_login'    => $user_login,
-                'user_password' => $user_pass,
-                'remember'      => $remember
-            );
-            
-            $user = wp_signon( $creds, false );
-            
-            if ( is_wp_error( $user ) ) {
-                // Display login errors
-                echo '<div class="error">' . $user->get_error_message() . '</div>';
-            } else {
-                // Redirect to my-account page on successful login
-                wp_redirect( site_url( '/my-account' ) );
-                exit;
-            }
-        } else {
-            // Display errors
-            foreach ( $errors as $error ) {
-                echo '<div class="error">' . esc_html( $error ) . '</div>';
-            }
-        }
-    }
-    
-    // Display login form
-    ?>
-    <form id="custom-login-form" method="post" action="" dir="rtl">
-        <div class="form-group">
-            <label for="user_login">اسم المستخدم أو البريد الإلكتروني <span class="required">*</span></label>
-            <input type="text" name="user_login" id="user_login" value="<?php echo isset( $_POST['user_login'] ) ? esc_attr( $_POST['user_login'] ) : ''; ?>" required />
-        </div>
-        
-        <div class="form-group password-container">
-            <label for="user_pass">كلمة المرور <span class="required">*</span></label>
-            <div class="password-input-container">
-                <input type="password" name="user_pass" id="user_pass" required />
-                <span class="toggle-password" onclick="togglePasswordVisibility('user_pass')">
-                    <svg class="eye-show" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <svg class="eye-hide" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <line x1="3" y1="3" x2="21" y2="21"></line>
-                    </svg>
-                </span>
-            </div>
-        </div>
-        
-        <div class="form-group remember-container">
-            <label for="remember" class="remember-label">
-                <input type="checkbox" name="remember" id="remember" />
-                <span>البقاء متصلاً</span>
-            </label>
-            <a href="<?php echo wp_lostpassword_url(); ?>" class="forgot-password">نسيت كلمة المرور؟</a>
-        </div>
-        
-        <div class="form-group">
-            <input type="submit" name="login_submit" value="تسجيل الدخول" />
-        </div>
+use TUTOR\Ajax;
 
-        <div class="register-link">
-            ليس لديك حساب؟ <a href="<?php echo site_url( '/student-registration' ); ?>">تسجيل حساب جديد</a>
-        </div>
-    </form>
-</div>
+$lost_pass = apply_filters( 'tutor_lostpassword_url', wp_lostpassword_url() );
+$is_rtl = is_user_logged_in() ? 'rtl' : 'ltr';
+$lang = is_user_logged_in() ? 'ar' : get_locale();
 
-<style>
-    .custom-login-container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        font-family: 'Tajawal', Arial, sans-serif;
+// Custom colors
+$primary_color = '#f6931e';
+$secondary_color = '#00aeac';
+
+// Custom CSS for the colors and RTL support
+$custom_css = "
+    :root {
+        --tutor-primary-color: {$primary_color};
+        --tutor-secondary-color: {$secondary_color};
     }
-    
-    .custom-login-container h2 {
-        color: #00aeac;
-        text-align: center;
-        margin-bottom: 30px;
+    .tutor-btn-primary, .tutor-btn-primary:hover {
+        background-color: var(--tutor-primary-color) !important;
+        border-color: var(--tutor-primary-color) !important;
     }
-    
-    .custom-login-container form {
-        background: #fff;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    .tutor-form-check-input:checked {
+        background-color: var(--tutor-primary-color) !important;
+        border-color: var(--tutor-primary-color) !important;
     }
-    
-    .form-group {
-        margin-bottom: 20px;
+    .tutor-btn-ghost:hover, .tutor-btn-link {
+        color: var(--tutor-secondary-color) !important;
     }
-    
-    .custom-login-container label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-        color: #333;
+    .password-strength-meter {
+        height: 5px;
+        margin-top: 5px;
+        border-radius: 3px;
+        transition: all 0.3s ease;
     }
-    
-    .custom-login-container input[type="text"],
-    .custom-login-container input[type="password"] {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-        transition: border 0.3s;
-    }
-    
-    .custom-login-container input[type="text"]:focus,
-    .custom-login-container input[type="password"]:focus {
-        border-color: #00aeac;
-        outline: none;
-    }
-    
-    .custom-login-container input[type="submit"] {
-        background: #f6931e;
-        color: white;
-        border: none;
-        padding: 14px 20px;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: bold;
-        width: 100%;
-        transition: background 0.3s;
-    }
-    
-    .custom-login-container input[type="submit"]:hover {
-        background: #e5820d;
-    }
-    
-    .error {
-        color: #fff;
-        background: #ff5858;
-        padding: 10px 15px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        text-align: right;
-    }
-    
-    .password-input-container {
+    .password-strength-meter.weak { background-color: #ff4d4d; width: 25%; }
+    .password-strength-meter.medium { background-color: #ffaa00; width: 50%; }
+    .password-strength-meter.good { background-color: #73e600; width: 75%; }
+    .password-strength-meter.strong { background-color: #00b300; width: 100%; }
+    .password-field-wrapper {
         position: relative;
     }
-    
-    .toggle-password {
+    .password-toggle {
         position: absolute;
-        left: 10px; /* Left for RTL */
+        right: " . ($is_rtl === 'rtl' ? 'auto' : '10px') . ";
+        left: " . ($is_rtl === 'rtl' ? '10px' : 'auto') . ";
         top: 50%;
         transform: translateY(-50%);
         cursor: pointer;
-        color: #777;
+        color: #6c757d;
     }
-    
-    .eye-hide {
-        display: none;
+    .rtl .password-toggle {
+        right: 10px;
+        left: auto;
     }
-    
-    .remember-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .password-strength-text {
+        font-size: 12px;
+        margin-top: 5px;
     }
-    
-    .remember-label {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-    }
-    
-    .remember-label input {
-        margin-left: 8px;
-    }
-    
-    .forgot-password {
-        color: #00aeac;
-        text-decoration: none;
-    }
-    
-    .register-link {
-        text-align: center;
-        margin-top: 20px;
-        color: #777;
-    }
-    
-    .register-link a {
-        color: #00aeac;
-        text-decoration: none;
-    }
-    
-    .required {
-        color: #ff5858;
-    }
+";
+
+/**
+ * Get login validation errors & print
+ *
+ * @since 2.1.3
+ */
+$login_errors = get_transient( Ajax::LOGIN_ERRORS_TRANSIENT_KEY ) ? get_transient( Ajax::LOGIN_ERRORS_TRANSIENT_KEY ) : array();
+
+// Arabic translations
+$translations = array(
+    'username_email' => $lang === 'ar' ? 'اسم المستخدم أو البريد الإلكتروني' : 'Username or Email Address',
+    'password' => $lang === 'ar' ? 'كلمة المرور' : 'Password',
+    'keep_signed_in' => $lang === 'ar' ? 'البقاء متصلاً' : 'Keep me signed in',
+    'forgot_password' => $lang === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot Password?',
+    'sign_in' => $lang === 'ar' ? 'تسجيل الدخول' : 'Sign In',
+    'no_account' => $lang === 'ar' ? 'ليس لديك حساب؟' : 'Don\'t have an account?',
+    'register_now' => $lang === 'ar' ? 'سجل الآن' : 'Register Now',
+    'show_password' => $lang === 'ar' ? 'إظهار كلمة المرور' : 'Show Password',
+    'hide_password' => $lang === 'ar' ? 'إخفاء كلمة المرور' : 'Hide Password',
+    'password_strength' => $lang === 'ar' ? 'قوة كلمة المرور:' : 'Password Strength:',
+    'weak' => $lang === 'ar' ? 'ضعيفة' : 'Weak',
+    'medium' => $lang === 'ar' ? 'متوسطة' : 'Medium',
+    'good' => $lang === 'ar' ? 'جيدة' : 'Good',
+    'strong' => $lang === 'ar' ? 'قوية' : 'Strong',
+);
+?>
+<style>
+    <?php echo $custom_css; ?>
 </style>
 
-<script>
-function togglePasswordVisibility(inputId) {
-    const passwordInput = document.getElementById(inputId);
-    const toggleButton = passwordInput.parentElement.querySelector('.toggle-password');
-    const eyeShow = toggleButton.querySelector('.eye-show');
-    const eyeHide = toggleButton.querySelector('.eye-hide');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeShow.style.display = 'none';
-        eyeHide.style.display = 'inline';
-    } else {
-        passwordInput.type = 'password';
-        eyeShow.style.display = 'inline';
-        eyeHide.style.display = 'none';
-    }
+<?php
+foreach ( $login_errors as $login_error ) {
+    ?>
+    <div class="tutor-alert tutor-warning tutor-mb-12" style="display:block; grid-gap: 0px 10px;">
+        <?php
+        echo wp_kses(
+            $login_error,
+            array(
+                'strong' => true,
+                'a'      => array(
+                    'href'  => true,
+                    'class' => true,
+                    'id'    => true,
+                ),
+                'p'      => array(
+                    'class' => true,
+                    'id'    => true,
+                ),
+                'div'    => array(
+                    'class' => true,
+                    'id'    => true,
+                ),
+            )
+        );
+        ?>
+    </div>
+    <?php
 }
-</script>
 
-<?php get_footer(); ?>
+do_action( 'tutor_before_login_form' );
+?>
+<form id="tutor-login-form" method="post" dir="<?php echo esc_attr($is_rtl); ?>" lang="<?php echo esc_attr($lang); ?>">
+    <?php if ( is_single_course() ) : ?>
+        <input type="hidden" name="tutor_course_enroll_attempt" value="<?php echo esc_attr( get_the_ID() ); ?>">
+    <?php endif; ?>
+    <?php tutor_nonce_field(); ?>
+    <input type="hidden" name="tutor_action" value="tutor_user_login" />
+    <input type="hidden" name="redirect_to" value="<?php echo esc_url( apply_filters( 'tutor_after_login_redirect_url', tutor()->current_url ) ); ?>" />
+
+    <div class="tutor-mb-20">
+        <input type="text" class="tutor-form-control" placeholder="<?php echo esc_attr($translations['username_email']); ?>" name="log" value="" size="20" required/>
+    </div>
+
+    <div class="tutor-mb-32 password-field-wrapper">
+        <input type="password" id="password-field" class="tutor-form-control" placeholder="<?php echo esc_attr($translations['password']); ?>" name="pwd" value="" size="20" required/>
+        <span id="password-toggle" class="password-toggle" title="<?php echo esc_attr($translations['show_password']); ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        </span>
+        <div class="password-strength-meter"></div>
+        <div class="password-strength-text"></div>
+    </div>
+
+    <div class="tutor-login-error"></div>
+    <?php
+        do_action( 'tutor_login_form_middle' );
+        do_action( 'login_form' );
+        apply_filters( 'login_form_middle', '', '' );
+    ?>
+    <div class="tutor-d-flex tutor-justify-between tutor-align-center tutor-mb-40">
+        <div class="tutor-form-check">
+            <input id="tutor-login-agmnt-1" type="checkbox" class="tutor-form-check-input tutor-bg-black-40" name="rememberme" value="forever" />
+            <label for="tutor-login-agmnt-1" class="tutor-fs-7 tutor-color-muted">
+                <?php echo esc_html($translations['keep_signed_in']); ?>
+            </label>
+        </div>
+        <a href="<?php echo esc_url( $lost_pass ); ?>" class="tutor-btn tutor-btn-ghost">
+            <?php echo esc_html($translations['forgot_password']); ?>
+        </a>
+    </div>
+
+    <?php do_action( 'tutor_login_form_end' ); ?>
+    <button type="submit" class="tutor-btn tutor-btn-primary tutor-btn-block">
+        <?php echo esc_html($translations['sign_in']); ?>
+    </button>
+    
+    <?php if ( get_option( 'users_can_register', false ) ) : ?>
+        <?php
+            $url_arg = array(
+                'redirect_to' => tutor()->current_url,
+            );
+            if ( is_single_course() ) {
+                $url_arg['enrol_course_id'] = get_the_ID();
+            }
+        ?>
+        <div class="tutor-text-center tutor-fs-6 tutor-color-secondary tutor-mt-20">
+            <?php echo esc_html($translations['no_account']); ?>&nbsp;
+            <a href="<?php echo esc_url( add_query_arg( $url_arg, tutor_utils()->student_register_url() ) ); ?>" class="tutor-btn tutor-btn-link">
+                <?php echo esc_html($translations['register_now']); ?>
+            </a>
+        </div>
+    <?php endif; ?>
+    <?php do_action( 'tutor_after_sign_in_button' ); ?>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password show/hide toggle
+    var passwordField = document.getElementById('password-field');
+    var passwordToggle = document.getElementById('password-toggle');
+    var isPasswordVisible = false;
+    
+    var translations = <?php echo json_encode($translations); ?>;
+    
+    passwordToggle.addEventListener('click', function() {
+        isPasswordVisible = !isPasswordVisible;
+        passwordField.type = isPasswordVisible ? 'text' : 'password';
+        passwordToggle.title = isPasswordVisible ? translations.hide_password : translations.show_password;
+        
+        // Change the eye icon
+        if (isPasswordVisible) {
+            passwordToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+        } else {
+            passwordToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        }
+    });
+    
+    // Password strength meter
+    var strengthMeter = document.querySelector('.password-strength-meter');
+    var strengthText = document.querySelector('.password-strength-text');
+    
+    passwordField.addEventListener('input', function() {
+        var password = passwordField.value;
+        var strength = checkPasswordStrength(password);
+        
+        // Reset classes
+        strengthMeter.className = 'password-strength-meter';
+        
+        if (password.length === 0) {
+            strengthMeter.style.display = 'none';
+            strengthText.style.display = 'none';
+            return;
+        }
+        
+        strengthMeter.style.display = 'block';
+        strengthText.style.display = 'block';
+        
+        if (strength === 1) {
+            strengthMeter.classList.add('weak');
+            strengthText.innerHTML = translations.password_strength + ' <span style="color: #ff4d4d;">' + translations.weak + '</span>';
+        } else if (strength === 2) {
+            strengthMeter.classList.add('medium');
+            strengthText.innerHTML = translations.password_strength + ' <span style="color: #ffaa00;">' + translations.medium + '</span>';
+        } else if (strength === 3) {
+            strengthMeter.classList.add('good');
+            strengthText.innerHTML = translations.password_strength + ' <span style="color: #73e600;">' + translations.good + '</span>';
+        } else if (strength === 4) {
+            strengthMeter.classList.add('strong');
+            strengthText.innerHTML = translations.password_strength + ' <span style="color: #00b300;">' + translations.strong + '</span>';
+        }
+    });
+    
+    function checkPasswordStrength(password) {
+        // Initialize variables
+        var strength = 0;
+        
+        // If password length is less than 6, return 1 (weak)
+        if (password.length < 6) {
+            return 1;
+        }
+        
+        // If password length is greater than or equal to 8, increase strength
+        if (password.length >= 8) {
+            strength += 1;
+        }
+        
+        // If password contains both lower and uppercase characters, increase strength
+        if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) {
+            strength += 1;
+        }
+        
+        // If password has numbers and characters, increase strength
+        if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)) {
+            strength += 1;
+        }
+        
+        // If password has one special character, increase strength
+        if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) {
+            strength += 1;
+        }
+        
+        return Math.min(strength, 4);
+    }
+    
+    // Modal handling
+    var loginModal = document.querySelector('.tutor-modal.tutor-login-modal');
+    var errors = <?php echo wp_json_encode( $login_errors ); ?>;
+    if (loginModal && errors.length) {
+        loginModal.classList.add('tutor-is-active');
+    }
+});
+</script>
+<?php
+do_action( 'tutor_after_login_form' );
+delete_transient( Ajax::LOGIN_ERRORS_TRANSIENT_KEY );
+?>
